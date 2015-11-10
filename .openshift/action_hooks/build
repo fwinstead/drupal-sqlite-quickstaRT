@@ -1,86 +1,34 @@
 #!/bin/bash
 
-set -e
+# just get the latest Drupal with wget. No drush dependency.
 
-# The PHP dir most be controlled by Drupal content
-if [ -e "${OPENSHIFT_REPO_DIR}php" -a ! -h "${OPENSHIFT_REPO_DIR}php" ]
-then
-  echo "ERROR: The 'php' directory in your Git repo prevents Drupal from being installed.  Please remove 'php' and push again."
-  exit 5
-fi
+set -e          # Exit immediately if a command exits with a non-zero status.
+
+VER=7                                           # Drupal major version
+PAGE="https://www.drupal.org/project/drupal"    # Drupal web page with latest versions
+
+# get the link to the latest file for the specified major version
+LNAME=`wget -q -O - ${PAGE} | sed '/drupal-'${VER}'.[0-9]*.tar.gz/!d; s/^[^\"]*\"//; s/\".*$//;'`
 
 DRUPAL_DIR=${OPENSHIFT_DATA_DIR}drupal
 DRUPAL_SITE_DIR=${OPENSHIFT_DATA_DIR}sites
 
-echo
+mkdir -p ${OPENSHIFT_TMP_DIR}drupal
+mkdir -p ${OPENSHIFT_DATA_DIR}downloads
 
-# Drush settings
-cat >$OPENSHIFT_HOMEDIR/.drush/drushrc.php <<EOF
-<?php
-  \$options['uri'] = \$_ENV['OPENSHIFT_APP_DNS'];
-  \$options['root'] = \$_ENV['OPENSHIFT_REPO_DIR'].'php';
-EOF
+# download and expand .tar.gz
+(cd ${OPENSHIFT_DATA_DIR}downloads ; wget -q ${LNAME})
+LATEST=$(ls -1t ${OPENSHIFT_DATA_DIR}downloads | head -1)
+(cd ${OPENSHIFT_DATA_DIR}downloads ; tar -xf ${LATEST})
 
-#
-# If there is no current download of Drupal, create one.
-#
-if [ ! -d "${OPENSHIFT_DATA_DIR}downloads/current" ]
-then
-  mkdir -p ${OPENSHIFT_TMP_DIR}drupal
+# Link the /current symlink to the latest Drupal instance
+LATEST=`echo ${LATEST} | sed 's/.tar.gz//;'`
+export DRUPAL_INSTALL_DIR="${OPENSHIFT_DATA_DIR}downloads/${LATEST}"
+ln -s ${LATEST} ${OPENSHIFT_DATA_DIR}downloads/current
 
-  echo "Download and install the latest stable version of Drupal"
-  echo
-
-  mkdir -p ${OPENSHIFT_DATA_DIR}downloads
-  if ! drush dl drupal --destination=${OPENSHIFT_DATA_DIR}downloads --yes
-  then
-    echo "ERROR: Unable download and install Drupal."
-    exit 7
-  fi
-
-  #
-  # Link the /current symlink to the latest Drupal instance
-  #
-  rm -f ${OPENSHIFT_DATA_DIR}downloads/current
-  LATEST=$(ls -1t ${OPENSHIFT_DATA_DIR}downloads | head -1)
-  export DRUPAL_INSTALL_DIR="${OPENSHIFT_DATA_DIR}downloads/${LATEST}"
-  ln -s ${LATEST} ${OPENSHIFT_DATA_DIR}downloads/current
-
-  mv $DRUPAL_INSTALL_DIR/sites $DRUPAL_INSTALL_DIR/sites.original
-
-  #
-  # Ensure there is a default health check
-  #
-  cp ${OPENSHIFT_REPO_DIR}.openshift/health_check.php ${DRUPAL_INSTALL_DIR}
-
-  patch ${DRUPAL_INSTALL_DIR}/.htaccess < ${OPENSHIFT_REPO_DIR}.openshift/.htaccess.patch
-
-  echo "Drupal installed to $DRUPAL_INSTALL_DIR"
-else
-  DRUPAL_INSTALL_DIR=$(readlink -f ${OPENSHIFT_DATA_DIR}downloads/current)
-  echo "Drupal is already installed at $DRUPAL_INSTALL_DIR"
-fi
-
-echo
-
-#
-# Link the /sites directory (where Drupal stores modules and files)
-# into the install dir in order to keep it easily accessible.
-#/
-if [ ! -d "$DRUPAL_SITE_DIR" ]
-then
-  cp -r $DRUPAL_INSTALL_DIR/sites.original $DRUPAL_SITE_DIR
-  ln -sfn ../../sites $DRUPAL_INSTALL_DIR/sites
-fi
-
-#
-# Ensure that the app-root/runtime/repo/php PHP directory points
-# to a valid Drupal instance directory
-#
-ln -sfn ../../data/downloads/current ${OPENSHIFT_REPO_DIR}php
-if [ ! -d "${OPENSHIFT_REPO_DIR}php" ]
-then  
-  echo "ERROR: Unable to link the PHP directory, as the current Drupal instance is not a valid directory."
-  exit 8
-fi
-
+# ####
+# modify Drupal
+mv $DRUPAL_INSTALL_DIR/sites $DRUPAL_INSTALL_DIR/sites.original
+# NEED line 58-91
+# install Health Check
+# ###

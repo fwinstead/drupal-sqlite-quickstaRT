@@ -19,7 +19,7 @@ Go to:
 
 Do | On
 
---- | --
+-------- | -------
 
 Click  | **"Add Application"**
 

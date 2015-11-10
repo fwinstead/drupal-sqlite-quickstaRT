@@ -14,13 +14,13 @@ Or from the web page:
 
 Click on: "Add Application"
 
-At the bottom of the page, fill in "URL to Cartridge definition" with: php-5.4
+At the bottom of the page, fill in "URL to Cartridge definition" with: **php-5.4**
 
 Click "Next"
 
-Public URL: drupalsqlite
+Public URL: **yoursitename**
 
-Source code: git://github.com/fwinstead/drupal-sqlite-quickstart.git
+Source code: **git://github.com/fwinstead/drupal-sqlite-quickstart.git**
 
 Click on "Create Application"
 

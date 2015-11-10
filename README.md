@@ -17,19 +17,16 @@ Go to:
 
   https://openshift.redhat.com/app/console/applications
 
-Do | On
 
--------- | -------
+1. Click: **"Add Application"**
 
-Click  | **"Add Application"**
+2. At the bottom of the page, fill in "URL to Cartridge definition": **php-5.4**
 
-At the bottom of the page, fill in "URL to Cartridge definition" | **php-5.4**
+3. Click: **"Next"**
 
-Click | **"Next"**
+4. Public URL: **yoursitename**
 
-Public URL | **yoursitename**
+5. Source code: **git://github.com/fwinstead/drupal-sqlite-quickstart.git**
 
-Source code | **git://github.com/fwinstead/drupal-sqlite-quickstart.git**
-
-Click | **"Create Application"**
+6. Click: **"Create Application"**
 

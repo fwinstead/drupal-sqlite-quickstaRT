@@ -30,7 +30,5 @@ ln -s ${LATEST} ${OPENSHIFT_DATA_DIR}downloads/current
 # modify Drupal
 mv $DRUPAL_INSTALL_DIR/sites $DRUPAL_INSTALL_DIR/sites.original
 # NEED line 58-91
-# install Health Check and .htaccess patch
-# cp ${OPENSHIFT_REPO_DIR}.openshift/health_check.php ${DRUPAL_INSTALL_DIR}
-#patch ${DRUPAL_INSTALL_DIR}/.htaccess < ${OPENSHIFT_REPO_DIR}.openshift/.htaccess.patch
+# install Health Check
 # ###

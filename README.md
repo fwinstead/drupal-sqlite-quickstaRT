@@ -13,8 +13,6 @@ From the command line:
 Or from the web page:
 --------------
 
-Go to:
-
   https://openshift.redhat.com/app/console/applications
 
 
@@ -24,9 +22,13 @@ Go to:
 
 3. Click: **"Next"**
 
-4. Public URL: **yoursitename**
+  Next Page
 
-5. Source code: **git://github.com/fwinstead/drupal-sqlite-quickstart.git**
+1. Public URL: **yoursitename**
 
-6. Click: **"Create Application"**
+2. Source code: **git://github.com/fwinstead/drupal-sqlite-quickstart.git**
+
+3. Click: **"Create Application"**
+
+
 

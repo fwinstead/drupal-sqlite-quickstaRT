@@ -27,7 +27,10 @@ echo "Creating a new Drupal site at ${DRUPAL_SITE_DIR}/default"
 #     --db-url=mysql://$OPENSHIFT_MYSQL_DB_USERNAME:$OPENSHIFT_MYSQL_DB_PASSWORD@$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/$OPENSHIFT_APP_NAME \
 #     --yes
 
-
-
+# NEED:
 # lines 56 - 133
 # line 60 drush install
+
+# copy sqlite installation profile to current/profiles/.
+cp -R ${OPENSHIFT_REPO_DIR}.openshift/install_profiles/* ${OPENSHIFT_DATA_DIR}downloads/current/profiles/.
+
